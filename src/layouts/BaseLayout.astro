@@ -28,6 +28,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     <title>{pageTitle}</title>
   </head>
   <body>
+    <div class="anime-bg" aria-hidden="true"></div>
     <header class="site-header">
       <nav class="nav" aria-label="Primary navigation">
         <a class="brand" href="/">
@@ -59,6 +60,51 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
         }
       });
     </script>
+    <script is:inline>
+      const loadMermaid = () =>
+        import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs');
+
+      const renderMermaid = async () => {
+        const blocks = [...document.querySelectorAll('.expressive-code pre code.language-mermaid, pre code.language-mermaid')];
+        if (!blocks.length) return;
+        const { default: mermaid } = await loadMermaid();
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'strict',
+          theme: 'base',
+          themeVariables: {
+            primaryColor: '#dfeee6',
+            primaryTextColor: '#171c18',
+            primaryBorderColor: '#bdd3c6',
+            lineColor: '#256f55',
+            secondaryColor: '#f7f8f4',
+            tertiaryColor: '#ffffff',
+            fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif',
+          },
+        });
+        await Promise.all(
+          blocks.map(async (code, index) => {
+            const source = code.textContent || '';
+            const host = code.closest('.expressive-code') || code.closest('pre');
+            if (!host || host.getAttribute('data-mermaid-rendered') === 'true') return;
+            host.setAttribute('data-mermaid-rendered', 'true');
+            const container = document.createElement('div');
+            container.className = 'mermaid-diagram';
+            try {
+              const { svg } = await mermaid.render(`mermaid-${index}-${Date.now()}`, source);
+              container.innerHTML = svg;
+              host.replaceWith(container);
+            } catch (error) {
+              container.classList.add('mermaid-error');
+              container.textContent = `Mermaid render failed: ${error instanceof Error ? error.message : String(error)}`;
+              host.replaceWith(container);
+            }
+          }),
+        );
+      };
+
+      window.addEventListener('DOMContentLoaded', renderMermaid);
+    </script>
     <Analytics />
     <SpeedInsights />
   </body>
@@ -68,18 +114,20 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
   :root {
     color-scheme: light;
     --bg: #f7f8f4;
+    --glass: rgba(255, 255, 255, 0.66);
+    --glass-strong: rgba(255, 255, 255, 0.82);
     --surface: #ffffff;
-    --surface-muted: #eef2e9;
+    --surface-muted: rgba(238, 242, 233, 0.82);
     --text: #171c18;
     --muted: #657064;
     --soft: #8a9387;
-    --line: #d9dfd4;
-    --line-strong: #bdc8ba;
+    --line: rgba(217, 223, 212, 0.84);
+    --line-strong: rgba(189, 200, 186, 0.9);
     --accent: #256f55;
     --accent-strong: #164936;
     --accent-soft: #dfeee6;
     --ink: #111713;
-    --code-bg: #18211c;
+    --code-bg: #111713;
     --warning: #9a5b00;
     font-family:
       Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -97,11 +145,6 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
   body {
     margin: 0;
     min-height: 100vh;
-    background:
-      linear-gradient(90deg, rgba(23, 28, 24, 0.035) 1px, transparent 1px),
-      linear-gradient(rgba(23, 28, 24, 0.03) 1px, transparent 1px),
-      var(--bg);
-    background-size: 48px 48px;
     color: var(--text);
     line-height: 1.65;
     animation: page-enter 360ms ease both;
@@ -111,9 +154,23 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     content: "";
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: -2;
+    background:
+      linear-gradient(90deg, rgba(23, 28, 24, 0.045) 1px, transparent 1px),
+      linear-gradient(rgba(23, 28, 24, 0.04) 1px, transparent 1px),
+      linear-gradient(180deg, rgba(247, 248, 244, 0.7), rgba(247, 248, 244, 0.92));
+    background-size: 48px 48px, 48px 48px, auto;
     pointer-events: none;
-    background: linear-gradient(180deg, rgba(247, 248, 244, 0.74), rgba(247, 248, 244, 0.94));
+  }
+
+  .anime-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    background-image: url("https://api.yppp.net/pc.php");
+    background-position: center;
+    background-size: cover;
+    filter: saturate(0.9) contrast(0.96);
   }
 
   a {
@@ -133,8 +190,8 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     top: 0;
     z-index: 10;
     border-bottom: 1px solid rgba(23, 28, 24, 0.1);
-    background: rgba(247, 248, 244, 0.9);
-    backdrop-filter: blur(14px);
+    background: rgba(247, 248, 244, 0.62);
+    backdrop-filter: blur(18px) saturate(1.12);
   }
 
   .nav {
@@ -186,7 +243,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
   }
 
   .nav-links a:hover {
-    background: var(--surface-muted);
+    background: rgba(255, 255, 255, 0.52);
     color: var(--text);
   }
 
@@ -277,11 +334,23 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
   }
 
   .workbench-panel,
-  .search-box {
+  .search-box,
+  .post-card,
+  .post-feature,
+  .post-row,
+  .tag-index a,
+  .article-sidebar {
     border: 1px solid var(--line-strong);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.72);
+    background: var(--glass);
+    backdrop-filter: blur(18px) saturate(1.12);
     box-shadow: 0 18px 50px rgba(23, 28, 24, 0.08);
+  }
+
+  .workbench-panel,
+  .search-box,
+  .post-feature,
+  .tag-index a {
+    border-radius: 10px;
     overflow: hidden;
   }
 
@@ -378,9 +447,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.76);
+    border-radius: 10px;
     transition:
       transform 160ms ease,
       border-color 160ms ease,
@@ -390,7 +457,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
   .post-card:hover {
     transform: translateY(-2px);
     border-color: var(--line-strong);
-    box-shadow: 0 16px 36px rgba(23, 28, 24, 0.08);
+    box-shadow: 0 16px 36px rgba(23, 28, 24, 0.12);
   }
 
   .post-card-cover {
@@ -438,10 +505,6 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
 
   .post-feature {
     margin-top: 24px;
-    border: 1px solid var(--line-strong);
-    border-radius: 8px;
-    background: var(--surface);
-    overflow: hidden;
   }
 
   .post-feature-inner {
@@ -459,7 +522,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     flex-direction: column;
     justify-content: space-between;
     border-left: 1px solid var(--line);
-    background: var(--surface-muted);
+    background: rgba(238, 242, 233, 0.52);
     padding: 22px;
   }
 
@@ -485,10 +548,8 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     grid-template-columns: 124px 1fr auto;
     gap: 16px;
     align-items: center;
-    border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 15px 16px;
-    background: rgba(255, 255, 255, 0.68);
   }
 
   .post-row a {
@@ -519,7 +580,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     border: 1px solid #bdd3c6;
     border-radius: 999px;
     padding: 4px 12px;
-    background: var(--accent-soft);
+    background: rgba(223, 238, 230, 0.8);
     color: var(--accent-strong);
     font-size: 0.88rem;
     text-decoration: none;
@@ -537,10 +598,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     min-height: 82px;
     align-items: center;
     justify-content: space-between;
-    border: 1px solid var(--line);
-    border-radius: 8px;
     padding: 18px;
-    background: rgba(255, 255, 255, 0.72);
     color: var(--text);
     font-weight: 750;
     text-decoration: none;
@@ -565,8 +623,8 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
   .article-sidebar {
     position: sticky;
     top: 96px;
-    border-left: 1px solid var(--line);
-    padding-left: 20px;
+    border-radius: 10px;
+    padding: 18px;
     color: var(--muted);
     font-size: 0.92rem;
   }
@@ -581,7 +639,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     max-height: 520px;
     object-fit: cover;
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: 10px;
   }
 
   .article-content {
@@ -598,7 +656,8 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
   .article-content p,
   .article-content ul,
   .article-content ol,
-  .article-content blockquote {
+  .article-content blockquote,
+  .article-content table {
     margin: 1.1em 0;
   }
 
@@ -608,6 +667,26 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
 
   .article-content code {
     font-size: 0.92em;
+  }
+
+  .article-content table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--glass);
+  }
+
+  .article-content th,
+  .article-content td {
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+    text-align: left;
+  }
+
+  .article-content th {
+    background: rgba(223, 238, 230, 0.72);
   }
 
   .article-content blockquote {
@@ -622,31 +701,64 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     padding: 0.45rem 0;
   }
 
+  .expressive-code {
+    margin: 1.45em 0;
+  }
+
+  .expressive-code .frame {
+    border-radius: 12px !important;
+    box-shadow: 0 20px 50px rgba(17, 23, 19, 0.16) !important;
+  }
+
+  .expressive-code .header::before {
+    content: "";
+    width: 42px;
+    height: 12px;
+    display: inline-block;
+    margin-right: 10px;
+    background:
+      radial-gradient(circle at 6px 6px, #ff5f57 0 5px, transparent 5.5px),
+      radial-gradient(circle at 21px 6px, #febc2e 0 5px, transparent 5.5px),
+      radial-gradient(circle at 36px 6px, #28c840 0 5px, transparent 5.5px);
+  }
+
   .article-content .callout,
   .article-content .content-details,
-  .article-content .content-columns > div {
-    border: 1px solid #c9d8d0;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.74);
+  .article-content .content-columns > div,
+  .article-content .content-timeline,
+  .article-content .content-plan,
+  .mermaid-diagram {
+    border: 1px solid rgba(201, 216, 208, 0.9);
+    border-radius: 10px;
+    background: var(--glass);
+    backdrop-filter: blur(16px) saturate(1.1);
   }
 
   .article-content .callout {
     margin: 1.4em 0;
     border-left: 4px solid var(--accent);
     padding: 14px 16px;
-    background: #f4faf6;
+  }
+
+  .article-content .callout-note {
+    border-left-color: #5865f2;
+    background: rgba(241, 243, 255, 0.82);
+  }
+
+  .article-content .callout-tip,
+  .article-content .callout-success {
+    border-left-color: #2f8f5b;
+    background: rgba(240, 251, 244, 0.82);
   }
 
   .article-content .callout-warning {
-    border-color: #e3c37d;
     border-left-color: #b87500;
-    background: #fff8e8;
+    background: rgba(255, 248, 232, 0.86);
   }
 
-  .article-content .callout-tip {
-    border-color: #afd8c2;
-    border-left-color: #2f8f5b;
-    background: #f0fbf4;
+  .article-content .callout-danger {
+    border-left-color: #c73e3a;
+    background: rgba(255, 241, 240, 0.86);
   }
 
   .article-content .callout-title {
@@ -706,6 +818,70 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     padding: 16px;
   }
 
+  .article-content .content-timeline {
+    margin: 1.5em 0;
+    padding: 16px;
+  }
+
+  .article-content .timeline-item {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 14px;
+    border-left: 2px solid var(--line-strong);
+    padding: 0 0 16px 16px;
+    position: relative;
+  }
+
+  .article-content .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 0.52em;
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+
+  .article-content .timeline-item time {
+    color: var(--accent-strong);
+    font-weight: 800;
+  }
+
+  .article-content .content-plan {
+    margin: 1.5em 0;
+    padding: 14px;
+    display: grid;
+    gap: 8px;
+  }
+
+  .article-content .content-plan > div {
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.62);
+  }
+
+  .article-content .content-plan [data-status]::before {
+    display: inline-flex;
+    min-width: 58px;
+    margin-right: 8px;
+    color: var(--accent-strong);
+    font-size: 0.78rem;
+    font-weight: 850;
+  }
+
+  .article-content .content-plan [data-status="todo"]::before {
+    content: "TODO";
+  }
+
+  .article-content .content-plan [data-status="doing"]::before {
+    content: "DOING";
+  }
+
+  .article-content .content-plan [data-status="done"]::before {
+    content: "DONE";
+  }
+
   .article-content .content-gallery {
     margin: 1.8em 0;
     display: grid;
@@ -718,13 +894,29 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     aspect-ratio: 4 / 3;
     object-fit: cover;
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: 10px;
   }
 
   .article-content .content-gallery figcaption {
     grid-column: 1 / -1;
     color: var(--muted);
     font-size: 0.92rem;
+  }
+
+  .mermaid-diagram {
+    margin: 1.5em 0;
+    padding: 18px;
+    overflow-x: auto;
+  }
+
+  .mermaid-diagram svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .mermaid-error {
+    color: #9a231f;
+    white-space: pre-wrap;
   }
 
   .search-shell {
@@ -747,7 +939,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
   }
 
   .search-box .pagefind-ui__search-input {
-    background: var(--surface);
+    background: rgba(255, 255, 255, 0.82);
   }
 
   .search-box .pagefind-ui__result {
@@ -757,9 +949,9 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
   .empty-state {
     margin-top: 44px;
     border: 1px dashed var(--line);
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 28px;
-    background: var(--surface);
+    background: var(--glass);
     color: var(--muted);
   }
 
@@ -791,7 +983,8 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     .post-feature-inner,
     .article-shell,
     .article-content .content-columns,
-    .article-content .content-gallery {
+    .article-content .content-gallery,
+    .article-content .timeline-item {
       grid-template-columns: 1fr;
     }
 
@@ -802,9 +995,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
 
     .article-sidebar {
       position: static;
-      border-left: 0;
-      border-top: 1px solid var(--line);
-      padding: 18px 0 0;
+      padding: 18px;
     }
 
     .post-row {
@@ -814,6 +1005,10 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
   }
 
   @media (max-width: 640px) {
+    .anime-bg {
+      background-image: url("https://api.yppp.net/pe.php");
+    }
+
     .nav {
       min-height: 78px;
       align-items: flex-start;

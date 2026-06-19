@@ -7,10 +7,12 @@ body {
 
 .callout,
 .content-details,
-.content-columns > div {
-  border: 1px solid #c9d8d0;
-  border-radius: 8px;
-  background: #f4faf6;
+.content-columns > div,
+.content-timeline,
+.content-plan {
+  border: 1px solid rgba(201, 216, 208, 0.9);
+  border-radius: 10px;
+  background: rgba(244, 250, 246, 0.86);
 }
 
 .callout {
@@ -19,21 +21,30 @@ body {
   padding: 14px 16px;
 }
 
-.callout-warning {
-  border-color: #e3c37d;
-  border-left-color: #b87500;
-  background: #fff8e8;
+.callout-title {
+  margin: 0 0 0.35em;
+  font-weight: 750;
 }
 
-.callout-tip {
-  border-color: #afd8c2;
+.callout-note {
+  border-left-color: #5865f2;
+  background: #f1f3ff;
+}
+
+.callout-tip,
+.callout-success {
   border-left-color: #2f8f5b;
   background: #f0fbf4;
 }
 
-.callout-title {
-  margin: 0 0 0.35em;
-  font-weight: 750;
+.callout-warning {
+  border-left-color: #b87500;
+  background: #fff8e8;
+}
+
+.callout-danger {
+  border-left-color: #c73e3a;
+  background: #fff1f0;
 }
 
 .content-details {
@@ -88,18 +99,69 @@ body {
   color: #657064;
 }
 
-.math-preview,
-.code-preview {
-  border-radius: 8px;
+.content-timeline {
+  margin: 1.4em 0;
+  padding: 16px;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 14px;
+  border-left: 2px solid #bdd3c6;
+  padding: 0 0 14px 16px;
+}
+
+.timeline-item time {
+  color: #256f55;
+  font-weight: 750;
+}
+
+.content-plan {
+  display: grid;
+  gap: 8px;
+  margin: 1.4em 0;
   padding: 14px;
-  background: #18211c;
+}
+
+.content-plan > div {
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.content-plan [data-status]::before {
+  margin-right: 8px;
+  color: #256f55;
+  font-weight: 800;
+}
+
+.content-plan [data-status="todo"]::before {
+  content: "TODO";
+}
+
+.content-plan [data-status="doing"]::before {
+  content: "DOING";
+}
+
+.content-plan [data-status="done"]::before {
+  content: "DONE";
+}
+
+.math-preview,
+.code-preview,
+.mermaid-preview {
+  border-radius: 10px;
+  padding: 14px;
+  background: #111713;
   color: #f8fff9;
   overflow-x: auto;
 }
 
 @media (max-width: 720px) {
   .content-columns,
-  .content-gallery {
+  .content-gallery,
+  .timeline-item {
     grid-template-columns: 1fr;
   }
 }
