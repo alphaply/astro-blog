@@ -18,7 +18,14 @@
       .map((line) => `<p>${escapeHtml(line).replace(/\n/g, '<br />')}</p>`)
       .join('\n');
 
-  const registerComponent = (definition) => window.CMS.registerEditorComponent(definition);
+  const registerComponent = (definition) =>
+    window.CMS.registerEditorComponent({
+      ...definition,
+      // Keep Insert menu support, but prevent Sveltia from replacing normal
+      // Markdown text with dashed editor-component chips in the writing area.
+      pattern: /a^/,
+      fromBlock: () => ({}),
+    });
 
   const register = () => {
     if (!window.CMS) {
