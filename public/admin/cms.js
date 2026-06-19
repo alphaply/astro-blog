@@ -50,7 +50,7 @@
           default: 'info',
         },
         { name: 'title', label: '标题', default: '提示' },
-        { name: 'message', label: '内容', widget: 'text', default: '在这里写提示内容。' },
+        { name: 'message', label: '内容', widget: 'text', default: '这里写提示内容。' },
       ],
       pattern: /^:::callout\{type="(?<type>[^"]+)" title="(?<title>[^"]*)"\}\n(?<message>[\s\S]*?)\n:::/m,
       fromBlock: ({ groups = {} }) => ({
@@ -118,7 +118,7 @@
           name: 'diagram',
           label: '图表代码',
           widget: 'text',
-          default: 'graph TD\n  A[Start] --> B[Build]\n  B --> C[Deploy]',
+          default: 'graph TD\n  A[开始] --> B[构建]\n  B --> C[部署]',
         },
       ],
       pattern: /^```mermaid\n(?<diagram>[\s\S]*?)\n```/m,
@@ -166,7 +166,7 @@
       label: '双列布局',
       icon: 'view_column',
       mode: 'dialog',
-      summary: 'Two columns',
+      summary: '双列布局',
       fields: [
         { name: 'left', label: '左列', widget: 'text', default: '左列内容' },
         { name: 'right', label: '右列', widget: 'text', default: '右列内容' },
@@ -194,19 +194,19 @@
         { name: 'date2', label: '时间 2', required: false },
         { name: 'text2', label: '内容 2', required: false },
       ],
-      pattern: /^:::timeline\n- \*\*(?<date1>.*?)\*\*：(?<text1>.*?)(?:\n- \*\*(?<date2>.*?)\*\*：(?<text2>.*?))?\n:::/m,
+      pattern: /^:::timeline\n- \*\*(?<date1>.*?)\*\*[：:]\s*(?<text1>.*?)(?:\n- \*\*(?<date2>.*?)\*\*[：:]\s*(?<text2>.*?))?\n:::/m,
       fromBlock: ({ groups = {} }) => ({
         date1: groups.date1 || '2026-06',
         text1: groups.text1 || '',
         date2: groups.date2 || '',
         text2: groups.text2 || '',
       }),
-      toBlock: ({ date1 = '', text1 = '', date2 = '', text2 = '' }) => {
-        const item2 = date2 || text2 ? `\n- **${date2}**：${text2}` : '';
+      toBlock: ({ date1 = '2026-06', text1 = '完成第一阶段。', date2 = '', text2 = '' }) => {
+        const item2 = date2 || text2 ? `\n- **${date2 || '2026-07'}**：${text2 || '继续优化。'}` : '';
         return block(`:::timeline\n- **${date1}**：${text1}${item2}\n:::`);
       },
-      toPreview: ({ date1 = '', text1 = '', date2 = '', text2 = '' }) => {
-        const item2 = date2 || text2 ? `<li><strong>${escapeHtml(date2)}</strong>：${escapeHtml(text2)}</li>` : '';
+      toPreview: ({ date1 = '2026-06', text1 = '完成第一阶段。', date2 = '', text2 = '' }) => {
+        const item2 = date2 || text2 ? `<li><strong>${escapeHtml(date2 || '2026-07')}</strong>：${escapeHtml(text2 || '继续优化。')}</li>` : '';
         return `<div class="content-timeline"><ul><li><strong>${escapeHtml(date1)}</strong>：${escapeHtml(text1)}</li>${item2}</ul></div>`;
       },
     });
@@ -228,9 +228,9 @@
         doing: groups.doing || '',
         done: groups.done || '',
       }),
-      toBlock: ({ todo = '', doing = '', done = '' }) =>
+      toBlock: ({ todo = '待办事项', doing = '进行中的事项', done = '已完成事项' }) =>
         block(`:::plan\n- [todo] ${todo}\n- [doing] ${doing}\n- [done] ${done}\n:::`),
-      toPreview: ({ todo = '', doing = '', done = '' }) =>
+      toPreview: ({ todo = '待办事项', doing = '进行中的事项', done = '已完成事项' }) =>
         `<div class="content-plan"><ul><li>[todo] ${escapeHtml(todo)}</li><li>[doing] ${escapeHtml(doing)}</li><li>[done] ${escapeHtml(done)}</li></ul></div>`,
     });
 

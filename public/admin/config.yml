@@ -11,8 +11,8 @@ public_folder: /uploads
 
 collections:
   - name: blog
-    label: Blog
-    label_singular: Post
+    label: 博客
+    label_singular: 文章
     folder: src/content/blog
     create: true
     extension: mdx
@@ -21,50 +21,50 @@ collections:
     identifier_field: title
     summary: "{{title}}"
     fields:
-      - label: Title
+      - label: 标题
         name: title
         widget: string
-      - label: Description
+      - label: 摘要
         name: description
         widget: text
-      - label: Publish Date
+      - label: 发布日期
         name: date
         widget: datetime
         date_format: YYYY-MM-DD
         time_format: false
         format: YYYY-MM-DD
-      - label: Updated Date
+      - label: 更新日期
         name: updatedDate
         widget: datetime
         date_format: YYYY-MM-DD
         time_format: false
         format: YYYY-MM-DD
         required: false
-      - label: Draft
+      - label: 草稿
         name: draft
         widget: boolean
         default: false
         required: false
-      - label: Cover Image
+      - label: 封面图
         name: cover
         widget: image
         required: false
-      - label: Category
+      - label: 分类
         name: category
         widget: string
         default: 随笔
-        hint: 比如：生活、知识、技术、作品、随笔。后续会自动进入分类页。
-      - label: Tags
+        hint: 比如：生活、知识、技术、作品、随笔。保存后会自动进入分类页。
+      - label: 标签
         name: tags
         widget: list
         required: false
         field:
-          label: Tag
+          label: 标签
           name: tag
           widget: string
-      - label: Body
+      - label: 正文
         name: body
         widget: markdown
         editor_components: [image, callout, math, code-template, mermaid, details, blur-reveal, columns, timeline, plan, table-template, gallery]
-        hint: 优先使用 Insert 菜单插入短代码内容块，不建议手写 HTML 标签。
+        hint: 优先使用 Insert 菜单插入短代码内容块；不要手写 HTML 标签，避免 MDX 构建失败。
         required: false

@@ -124,7 +124,17 @@ body {
   padding: 14px;
 }
 
-.content-plan > div {
+.content-plan ul,
+.content-timeline ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.content-plan > div,
+.content-plan li {
   border-radius: 8px;
   padding: 10px 12px;
   background: rgba(255, 255, 255, 0.7);
@@ -146,6 +156,19 @@ body {
 
 .content-plan [data-status="done"]::before {
   content: "DONE";
+}
+
+.content-timeline li {
+  border-left: 2px solid #bdd3c6;
+  padding: 0 0 12px 16px;
+}
+
+.content-timeline li strong {
+  color: #256f55;
+}
+
+.content-gallery p {
+  display: contents;
 }
 
 .math-preview,

@@ -7,9 +7,81 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
-    <title>Content Manager</title>
+    <title>Alpha blog CMS</title>
+    <style>
+      .cms-writing-guide {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 1000;
+        width: min(360px, calc(100vw - 36px));
+        max-height: 48vh;
+        overflow: auto;
+        border: 1px solid rgba(45, 56, 48, 0.14);
+        border-radius: 14px;
+        background: rgba(255, 255, 252, 0.92);
+        box-shadow: 0 18px 44px rgba(20, 26, 22, 0.14);
+        color: #1d241f;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        backdrop-filter: blur(16px) saturate(1.05);
+      }
+
+      .cms-writing-guide summary {
+        cursor: pointer;
+        padding: 12px 14px;
+        font-weight: 760;
+      }
+
+      .cms-writing-guide[open] summary {
+        border-bottom: 1px solid rgba(45, 56, 48, 0.1);
+      }
+
+      .cms-writing-guide div {
+        padding: 12px 14px 14px;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .cms-writing-guide p,
+      .cms-writing-guide ul {
+        margin: 0 0 10px;
+      }
+
+      .cms-writing-guide ul {
+        padding-left: 18px;
+      }
+
+      .cms-writing-guide code {
+        border-radius: 6px;
+        padding: 1px 5px;
+        background: #eef4ef;
+        color: #245b47;
+      }
+
+      @media (max-width: 720px) {
+        .cms-writing-guide {
+          display: none;
+        }
+      }
+    </style>
   </head>
   <body data-pagefind-ignore>
+    <details class="cms-writing-guide">
+      <summary>写作提示：优先使用 Insert</summary>
+      <div>
+        <p>正文编辑区仍然是 Markdown/短代码源码，这是 Sveltia 的限制。尽量使用工具栏的 <code>Insert</code> 菜单，不要手写 HTML 标签。</p>
+        <ul>
+          <li>提示块：<code>:::callout</code></li>
+          <li>折叠框：<code>:::details</code></li>
+          <li>双列：<code>::::columns</code></li>
+          <li>计划：<code>:::plan</code></li>
+          <li>时间线：<code>:::timeline</code></li>
+        </ul>
+        <p>保存前看右侧预览；如果预览里还显示短代码，通常是缺少结尾的 <code>:::</code>。</p>
+      </div>
+    </details>
     <script is:inline>
       window.CMS_MANUAL_INIT = true;
     </script>
