@@ -1,9 +1,10 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+
 backend:
   name: github
   repo: alphaply/astro-blog
   branch: main
-  # For hosted GitHub auth, deploy Sveltia CMS Authenticator and uncomment:
-  # base_url: https://your-sveltia-cms-auth.your-subdomain.workers.dev
+  base_url: https://sveltia-cms-auth.1526147838.workers.dev
 
 media_folder: public/uploads
 public_folder: /uploads
@@ -59,4 +60,5 @@ collections:
       - label: Body
         name: body
         widget: markdown
+        editor_components: [image, callout]
         required: false

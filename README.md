@@ -1,4 +1,4 @@
-# Astro Blog
+# Alpha's Blog
 
 Static blog powered by Astro, MDX content collections, and Sveltia CMS.
 
@@ -11,20 +11,34 @@ npm run dev
 
 Open `http://localhost:4321` for the site and `http://localhost:4321/admin/` for Sveltia CMS.
 
+Production site: `https://elpha.vercel.app/`
+
+Production CMS: `https://elpha.vercel.app/admin/`
+
+## Theme and CMS Workflow
+
+When adding a reusable writing component, update both sides together:
+
+- Add the front-end rendering or CSS for the component.
+- Register a matching Sveltia editor component in `public/admin/cms.js`.
+- Add the component ID to the `editor_components` list for the body field in `public/admin/config.yml`.
+- Add a short example in an MDX draft before publishing.
+
 ## CMS Setup
 
 Content lives in `src/content/blog/*.mdx`. Uploaded media lives in `public/uploads` and is referenced as `/uploads/...`.
 
-Before deploying the CMS, update `public/admin/config.yml`:
+The CMS backend is configured in `public/admin/config.yml`:
 
 ```yaml
 backend:
   name: github
-  repo: your-github-username/astro-blog
+  repo: alphaply/astro-blog
   branch: main
+  base_url: https://sveltia-cms-auth.1526147838.workers.dev
 ```
 
-For GitHub login on a Vercel-hosted site, Sveltia CMS needs a GitHub OAuth flow. The recommended option is the Sveltia CMS Authenticator Cloudflare Worker, then add its URL as `backend.base_url`.
+For GitHub login on the Vercel-hosted site, Sveltia CMS uses the Sveltia CMS Authenticator Cloudflare Worker above.
 
 ## Deploy
 

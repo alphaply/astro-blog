@@ -4,12 +4,14 @@ interface Props {
   description?: string;
 }
 
+const siteName = "Alpha's Blog";
+
 const {
-  title = 'Astro Blog',
-  description = 'A static blog powered by Astro and Sveltia CMS.',
+  title = siteName,
+  description = 'A personal technical notebook powered by Astro and Sveltia CMS.',
 } = Astro.props;
 
-const pageTitle = title === 'Astro Blog' ? title : `${title} | Astro Blog`;
+const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
 ---
 
 <!doctype html>
@@ -24,7 +26,7 @@ const pageTitle = title === 'Astro Blog' ? title : `${title} | Astro Blog`;
   <body>
     <header class="site-header">
       <nav class="nav" aria-label="Primary navigation">
-        <a class="brand" href="/">Astro Blog</a>
+        <a class="brand" href="/">{siteName}</a>
         <div class="nav-links">
           <a href="/">文章</a>
           <a href="/tags/">标签</a>
@@ -36,7 +38,7 @@ const pageTitle = title === 'Astro Blog' ? title : `${title} | Astro Blog`;
       <slot />
     </main>
     <footer class="site-footer">
-      <span>Powered by Astro, GitHub, and Sveltia CMS.</span>
+      <span>Alpha's Blog is built with Astro, GitHub, and Sveltia CMS.</span>
     </footer>
   </body>
 </html>
@@ -286,6 +288,37 @@ const pageTitle = title === 'Astro Blog' ? title : `${title} | Astro Blog`;
     border-left: 4px solid var(--accent);
     padding-left: 18px;
     color: var(--muted);
+  }
+
+  .article-content .callout {
+    margin: 1.4em 0;
+    border: 1px solid #c9d8d0;
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: #f4faf6;
+  }
+
+  .article-content .callout-warning {
+    border-color: #e3c37d;
+    border-left-color: #b87500;
+    background: #fff8e8;
+  }
+
+  .article-content .callout-tip {
+    border-color: #afd8c2;
+    border-left-color: #2f8f5b;
+    background: #f0fbf4;
+  }
+
+  .article-content .callout-title {
+    margin: 0 0 0.35em;
+    color: var(--text);
+    font-weight: 750;
+  }
+
+  .article-content .callout p:last-child {
+    margin-bottom: 0;
   }
 
   .empty-state {
