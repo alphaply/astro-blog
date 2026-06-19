@@ -4,11 +4,13 @@ import expressiveCode from 'astro-expressive-code';
 import { unified } from '@astrojs/markdown-remark';
 import rehypeKatex from 'rehype-katex';
 import remarkMath from 'remark-math';
+import remarkDirective from 'remark-directive';
+import remarkContentBlocks from './src/lib/remark-content-blocks.mjs';
 
 export default defineConfig({
   markdown: {
     processor: unified({
-      remarkPlugins: [remarkMath],
+      remarkPlugins: [remarkMath, remarkDirective, remarkContentBlocks],
       rehypePlugins: [rehypeKatex],
     }),
   },

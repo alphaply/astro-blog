@@ -66,4 +66,5 @@ collections:
         name: body
         widget: markdown
         editor_components: [image, callout, math, code-template, mermaid, details, blur-reveal, columns, timeline, plan, table-template, gallery]
+        hint: 优先使用 Insert 菜单插入短代码内容块，不建议手写 HTML 标签。
         required: false

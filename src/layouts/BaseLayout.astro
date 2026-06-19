@@ -873,7 +873,17 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     gap: 10px;
   }
 
-  .content-plan > div {
+  .content-plan ul,
+  .content-timeline ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  .content-plan > div,
+  .content-plan li {
     padding: 10px 12px;
     border-radius: 12px;
     background: rgba(255, 255, 252, 0.76);
@@ -888,6 +898,10 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     font-size: 0.75rem;
   }
 
+  .content-plan li::first-letter {
+    color: var(--accent);
+  }
+
   .content-timeline {
     position: relative;
     display: grid;
@@ -900,7 +914,13 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     gap: 12px;
   }
 
-  .timeline-item time {
+  .content-timeline li {
+    padding: 10px 0 10px 14px;
+    border-left: 3px solid var(--accent-soft);
+  }
+
+  .timeline-item time,
+  .content-timeline li strong {
     color: var(--accent);
     font-weight: 800;
   }
@@ -909,6 +929,10 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 10px;
+  }
+
+  .content-gallery p {
+    display: contents;
   }
 
   .content-gallery img {
