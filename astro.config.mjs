@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
+import react from '@astrojs/react';
 import expressiveCode from 'astro-expressive-code';
 import { unified } from '@astrojs/markdown-remark';
 import rehypeKatex from 'rehype-katex';
@@ -15,6 +16,7 @@ export default defineConfig({
     }),
   },
   integrations: [
+    react(),
     expressiveCode({
       themes: ['github-dark', 'github-light'],
       styleOverrides: {

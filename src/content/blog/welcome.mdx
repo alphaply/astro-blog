@@ -1,6 +1,6 @@
 ---
 title: 第一篇文章
-description: 这是一篇示例 MDX 文章，用来验证 Astro 内容集合和 Sveltia CMS 配置。
+description: 这是一篇示例 MDX 文章，用来验证 Astro 内容集合和编辑器配置。
 date: 2026-06-19
 updatedDate: 2026-06-19
 draft: false
@@ -13,16 +13,16 @@ tags:
 
 欢迎使用这个静态博客。
 
-内容文件存放在 `src/content/blog`，后台编辑入口是 `/admin/`。Sveltia CMS 会把文章保存为 MDX 文件，把图片保存到 `public/uploads`。
+内容文件存放在 `src/content/blog`，新版后台入口是 `/admin/editor/`。文章会保存为 MDX 文件，并由 Vercel 自动部署。
 
 ## 下一步
 
-1. 在后台创建真实文章。
+1. 在新版后台创建真实文章。
 2. 给文章设置分类和标签。
-3. 保存后由 Vercel 自动部署。
+3. 保存后等待 Vercel 自动部署。
 
 :::callout{type="tip" title="写作方式"}
-现在 CMS 插入的是短代码，不需要手写 HTML 标签，构建失败的概率会低很多。
+新版后台使用块编辑器编辑正文，并在保存时导出为 MDX 短代码。
 :::
 
 这个站点会继续扩展成生活、知识和作品记录的长期版本。

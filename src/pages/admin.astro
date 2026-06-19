@@ -9,77 +9,57 @@
     <meta name="robots" content="noindex" />
     <title>Alpha blog CMS</title>
     <style>
-      .cms-writing-guide {
+      body {
+        margin: 0;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      .cms-switch {
         position: fixed;
         right: 18px;
         bottom: 18px;
         z-index: 1000;
-        width: min(360px, calc(100vw - 36px));
-        max-height: 48vh;
-        overflow: auto;
+        width: min(380px, calc(100vw - 36px));
         border: 1px solid rgba(45, 56, 48, 0.14);
         border-radius: 14px;
-        background: rgba(255, 255, 252, 0.92);
+        background: rgba(255, 255, 252, 0.94);
         box-shadow: 0 18px 44px rgba(20, 26, 22, 0.14);
         color: #1d241f;
-        font-family:
-          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-          sans-serif;
         backdrop-filter: blur(16px) saturate(1.05);
       }
 
-      .cms-writing-guide summary {
+      .cms-switch summary {
         cursor: pointer;
         padding: 12px 14px;
         font-weight: 760;
       }
 
-      .cms-writing-guide[open] summary {
-        border-bottom: 1px solid rgba(45, 56, 48, 0.1);
-      }
-
-      .cms-writing-guide div {
-        padding: 12px 14px 14px;
+      .cms-switch div {
+        padding: 0 14px 14px;
         font-size: 13px;
         line-height: 1.55;
       }
 
-      .cms-writing-guide p,
-      .cms-writing-guide ul {
-        margin: 0 0 10px;
-      }
-
-      .cms-writing-guide ul {
-        padding-left: 18px;
-      }
-
-      .cms-writing-guide code {
-        border-radius: 6px;
-        padding: 1px 5px;
-        background: #eef4ef;
-        color: #245b47;
-      }
-
-      @media (max-width: 720px) {
-        .cms-writing-guide {
-          display: none;
-        }
+      .cms-switch a {
+        display: inline-flex;
+        margin-top: 8px;
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: #2f6d58;
+        color: white;
+        text-decoration: none;
+        font-weight: 760;
       }
     </style>
   </head>
   <body data-pagefind-ignore>
-    <details class="cms-writing-guide">
-      <summary>写作提示：优先使用 Insert</summary>
+    <details class="cms-switch" open>
+      <summary>推荐使用新版块编辑器</summary>
       <div>
-        <p>正文编辑区会显示普通 Markdown/短代码文本，不会折叠成虚线组件块。尽量使用工具栏的 <code>Insert</code> 菜单，不要手写 HTML 标签。</p>
-        <ul>
-          <li>提示块：<code>:::callout</code></li>
-          <li>折叠框：<code>:::details</code></li>
-          <li>双列：<code>::::columns</code></li>
-          <li>计划：<code>:::plan</code></li>
-          <li>时间线：<code>:::timeline</code></li>
-        </ul>
-        <p>保存前看右侧预览；如果预览里还显示短代码，通常是缺少结尾的 <code>:::</code>。</p>
+        <p>Sveltia 仍保留为兜底入口，但复杂正文建议使用自研块编辑器。新版支持可编辑表格、结构化内容块，并保存为 MDX 短代码。</p>
+        <a href="/admin/editor/">进入 Alpha editor</a>
       </div>
     </details>
     <script is:inline>
