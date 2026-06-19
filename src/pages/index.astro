@@ -6,6 +6,20 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 
+const featuredPost = posts[0];
+const recentPosts = posts.slice(1, 5);
+const tagCounts = new Map<string, number>();
+
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+
+const topTags = [...tagCounts.entries()]
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-CN', { sensitivity: 'base' }))
+  .slice(0, 8);
+
 const formatDate = (date: Date) =>
   new Intl.DateTimeFormat('zh-CN', {
     year: 'numeric',
@@ -15,31 +29,69 @@ const formatDate = (date: Date) =>
 ---
 
 <BaseLayout>
-  <section>
-    <p class="page-kicker">Static publishing</p>
-    <h1 class="page-title">GitHub 内容驱动的 Astro 博客</h1>
-    <p class="page-intro">
-      使用 Sveltia CMS 编辑 MDX 文章，内容和图片直接进入 GitHub 仓库，Vercel 自动部署。
-    </p>
+  <section class="home-hero">
+    <div class="hero-copy">
+      <p class="page-kicker">Workbench Notes</p>
+      <h1 class="page-title">Alpha 的技术手账</h1>
+      <p class="page-intro">
+        记录工程实践、工具链选择、静态站搭建和长期学习笔记。这里更像一个持续整理的工作台，而不是一次性写完的展示页。
+      </p>
+      <div class="hero-actions">
+        <a class="button-link" href="#latest">查看最新文章</a>
+        <a class="button-link secondary" href="/tags/">按标签浏览</a>
+      </div>
+    </div>
+
+    <aside class="workbench-panel" aria-label="博客状态">
+      <div class="panel-bar">
+        <span>alpha/workbench</span>
+        <span class="panel-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+      </div>
+      <div class="panel-content">
+        <ul class="status-list">
+          <li>
+            <span class="status-label">Focus</span>
+            <span class="status-value">Astro / CMS / Frontend</span>
+          </li>
+          <li>
+            <span class="status-label">Articles</span>
+            <span class="status-value">{posts.length} published</span>
+          </li>
+          <li>
+            <span class="status-label">Stack</span>
+            <span class="status-value">MDX + GitHub + Vercel</span>
+          </li>
+          <li>
+            <span class="status-label">CMS</span>
+            <span class="status-value">Sveltia with OAuth</span>
+          </li>
+        </ul>
+      </div>
+    </aside>
   </section>
 
   {
-    posts.length > 0 ? (
-      <section class="post-grid" aria-label="文章列表">
-        {posts.map((post) => (
-          <article class="post-card">
-            {post.data.cover ? (
-              <img class="post-card-cover" src={post.data.cover} alt="" loading="lazy" />
-            ) : null}
-            <div class="post-card-body">
-              <p class="post-meta">{formatDate(post.data.date)}</p>
+    featuredPost ? (
+      <section aria-labelledby="featured-title">
+        <div class="section-heading">
+          <div>
+            <p class="page-kicker">Featured</p>
+            <h2 id="featured-title">最近在写</h2>
+          </div>
+          <p>最新发布会放在这里，适合当作继续阅读的入口。</p>
+        </div>
+
+        <article class="post-feature">
+          <div class="post-feature-inner">
+            <div class="post-feature-copy">
+              <p class="post-meta">{formatDate(featuredPost.data.date)}</p>
               <h2>
-                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                <a href={`/blog/${featuredPost.id}/`}>{featuredPost.data.title}</a>
               </h2>
-              <p>{post.data.description}</p>
-              {post.data.tags.length > 0 ? (
-                <ul class="tag-list" aria-label={`${post.data.title} 的标签`}>
-                  {post.data.tags.map((tag) => (
+              <p>{featuredPost.data.description}</p>
+              {featuredPost.data.tags.length > 0 ? (
+                <ul class="tag-list" aria-label={`${featuredPost.data.title} 的标签`}>
+                  {featuredPost.data.tags.map((tag) => (
                     <li>
                       <a href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
                     </li>
@@ -47,11 +99,73 @@ const formatDate = (date: Date) =>
                 </ul>
               ) : null}
             </div>
-          </article>
-        ))}
+            <div class="post-feature-aside">
+              <p class="page-kicker">Entry</p>
+              <p>
+                内容文件保存在 GitHub，后台通过 Sveltia CMS 编辑，部署由 Vercel 自动完成。
+              </p>
+              <a class="button-link secondary" href={`/blog/${featuredPost.id}/`}>阅读全文</a>
+            </div>
+          </div>
+        </article>
       </section>
     ) : (
       <p class="empty-state">还没有已发布文章。可以从 /admin/ 创建第一篇。</p>
     )
+  }
+
+  <section id="latest" aria-labelledby="latest-title">
+    <div class="section-heading">
+      <div>
+        <p class="page-kicker">Latest</p>
+        <h2 id="latest-title">最新文章</h2>
+      </div>
+      <p>按发布时间倒序排列，适合快速回到最近的记录。</p>
+    </div>
+
+    {
+      recentPosts.length > 0 ? (
+        <div class="post-list">
+          {recentPosts.map((post) => (
+            <article class="post-row">
+              <p class="post-meta">{formatDate(post.data.date)}</p>
+              <div>
+                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                <p>{post.data.description}</p>
+              </div>
+              {post.data.tags[0] ? (
+                <a class="tag-pill" href={`/tags/${encodeURIComponent(post.data.tags[0])}/`}>
+                  {post.data.tags[0]}
+                </a>
+              ) : null}
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p class="empty-state">更多文章发布后会显示在这里。</p>
+      )
+    }
+  </section>
+
+  {
+    topTags.length > 0 ? (
+      <section aria-labelledby="topics-title">
+        <div class="section-heading">
+          <div>
+            <p class="page-kicker">Index</p>
+            <h2 id="topics-title">主题索引</h2>
+          </div>
+          <p>用标签把笔记串起来，后续主题扩展也会优先围绕这里组织。</p>
+        </div>
+        <div class="tag-index">
+          {topTags.map(([tag, count]) => (
+            <a href={`/tags/${encodeURIComponent(tag)}/`}>
+              {tag}
+              <span>{count}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    ) : null
   }
 </BaseLayout>

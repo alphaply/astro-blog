@@ -19,21 +19,20 @@ const tags = [...tagCounts.entries()].sort((a, b) =>
 <BaseLayout title="标签" description="按标签浏览文章。">
   <section>
     <p class="page-kicker">Topics</p>
-    <h1 class="page-title">标签</h1>
-    <p class="page-intro">按主题查找已发布文章。</p>
+    <h1 class="page-title">标签索引</h1>
+    <p class="page-intro">按主题浏览已发布文章，把零散笔记整理成可回访的路径。</p>
   </section>
 
   {
     tags.length > 0 ? (
-      <ul class="tag-list" aria-label="标签列表">
+      <div class="tag-index" aria-label="标签列表">
         {tags.map(([tag, count]) => (
-          <li>
-            <a href={`/tags/${encodeURIComponent(tag)}/`}>
-              {tag} <span aria-hidden="true">({count})</span>
-            </a>
-          </li>
+          <a href={`/tags/${encodeURIComponent(tag)}/`}>
+            {tag}
+            <span>{count}</span>
+          </a>
         ))}
-      </ul>
+      </div>
     ) : (
       <p class="empty-state">还没有标签。</p>
     )

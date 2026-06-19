@@ -23,33 +23,37 @@ const formatDate = (date: Date) =>
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description}>
-  <article>
-    <header class="article-header">
-      <p class="post-meta">{formatDate(post.data.date)}</p>
-      <h1 class="page-title">{post.data.title}</h1>
-      <p class="page-intro">{post.data.description}</p>
-      {
-        post.data.updatedDate ? (
-          <p class="post-meta">更新于 {formatDate(post.data.updatedDate)}</p>
-        ) : null
-      }
+  <article class="article-shell">
+    <div>
+      <header class="article-header">
+        <p class="page-kicker">Notebook Entry</p>
+        <h1 class="page-title">{post.data.title}</h1>
+        <p class="page-intro">{post.data.description}</p>
+        {post.data.cover ? <img class="article-cover" src={post.data.cover} alt="" /> : null}
+      </header>
+
+      <div class="article-content">
+        <Content />
+      </div>
+    </div>
+
+    <aside class="article-sidebar" aria-label="文章信息">
+      <p><strong>发布</strong><br />{formatDate(post.data.date)}</p>
+      {post.data.updatedDate ? <p><strong>更新</strong><br />{formatDate(post.data.updatedDate)}</p> : null}
       {
         post.data.tags.length > 0 ? (
-          <ul class="tag-list" aria-label={`${post.data.title} 的标签`}>
-            {post.data.tags.map((tag) => (
-              <li>
-                <a href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
-              </li>
-            ))}
-          </ul>
+          <>
+            <p><strong>标签</strong></p>
+            <ul class="tag-list" aria-label={`${post.data.title} 的标签`}>
+              {post.data.tags.map((tag) => (
+                <li>
+                  <a href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
+                </li>
+              ))}
+            </ul>
+          </>
         ) : null
       }
-    </header>
-
-    {post.data.cover ? <img class="article-cover" src={post.data.cover} alt="" /> : null}
-
-    <div class="article-content">
-      <Content />
-    </div>
+    </aside>
   </article>
 </BaseLayout>
