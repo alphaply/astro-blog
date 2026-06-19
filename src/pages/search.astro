@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="搜索" description="搜索 Alpha's Blog 的文章内容。">
+  <section class="search-shell">
+    <p class="page-kicker">Search</p>
+    <h1 class="page-title">搜索笔记</h1>
+    <p class="page-intro">检索文章标题、正文和标签。索引由 Pagefind 在静态构建后生成，不依赖后端服务。</p>
+
+    <div class="search-box" data-pagefind-ignore>
+      <div id="search"></div>
+      <noscript>搜索需要启用 JavaScript。</noscript>
+    </div>
+  </section>
+
+  <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!window.PagefindUI) return;
+      new window.PagefindUI({
+        element: '#search',
+        showSubResults: true,
+        resetStyles: false,
+        translations: {
+          placeholder: '搜索文章、标签或关键词',
+          clear_search: '清空',
+          load_more: '加载更多',
+          search_label: '搜索本站',
+          filters_label: '筛选',
+          zero_results: '没有找到结果',
+          many_results: '[COUNT] 个结果',
+          one_result: '[COUNT] 个结果',
+          searching: '搜索中...',
+        },
+      });
+    });
+  </script>
+</BaseLayout>

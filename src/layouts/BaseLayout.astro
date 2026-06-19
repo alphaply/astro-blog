@@ -24,6 +24,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" />
     <title>{pageTitle}</title>
   </head>
   <body>
@@ -36,17 +37,28 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
         <div class="nav-links">
           <a href="/">文章</a>
           <a href="/tags/">标签</a>
+          <a href="/search/">搜索</a>
           <a href="/admin/">CMS</a>
         </div>
       </nav>
     </header>
-    <main>
+    <main data-pagefind-body>
       <slot />
     </main>
     <footer class="site-footer">
       <span>Alpha's Blog · Astro / MDX / GitHub / Sveltia CMS</span>
       <a href="/admin/">进入后台</a>
     </footer>
+    <script is:inline>
+      document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const reveal = target.closest('.blur-reveal');
+        if (reveal) {
+          reveal.classList.toggle('is-revealed');
+        }
+      });
+    </script>
     <Analytics />
     <SpeedInsights />
   </body>
@@ -92,6 +104,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     background-size: 48px 48px;
     color: var(--text);
     line-height: 1.65;
+    animation: page-enter 360ms ease both;
   }
 
   body::before {
@@ -263,7 +276,8 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     color: var(--text);
   }
 
-  .workbench-panel {
+  .workbench-panel,
+  .search-box {
     border: 1px solid var(--line-strong);
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.72);
@@ -590,9 +604,6 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
 
   .article-content pre {
     overflow-x: auto;
-    border-radius: 8px;
-    padding: 18px;
-    background: var(--code-bg);
   }
 
   .article-content code {
@@ -605,11 +616,23 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     color: var(--muted);
   }
 
+  .article-content .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.45rem 0;
+  }
+
+  .article-content .callout,
+  .article-content .content-details,
+  .article-content .content-columns > div {
+    border: 1px solid #c9d8d0;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.74);
+  }
+
   .article-content .callout {
     margin: 1.4em 0;
-    border: 1px solid #c9d8d0;
     border-left: 4px solid var(--accent);
-    border-radius: 8px;
     padding: 14px 16px;
     background: #f4faf6;
   }
@@ -636,6 +659,101 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     margin-bottom: 0;
   }
 
+  .article-content .content-details {
+    margin: 1.35em 0;
+    overflow: hidden;
+  }
+
+  .article-content .content-details summary {
+    cursor: pointer;
+    padding: 13px 16px;
+    color: var(--text);
+    font-weight: 750;
+  }
+
+  .article-content .content-details > :not(summary) {
+    margin: 0;
+    padding: 0 16px 14px;
+  }
+
+  .article-content .blur-reveal {
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 0.05em 0.24em;
+    background: rgba(37, 111, 85, 0.12);
+    filter: blur(5px);
+    transition:
+      filter 160ms ease,
+      background 160ms ease;
+  }
+
+  .article-content .blur-reveal:hover,
+  .article-content .blur-reveal:focus,
+  .article-content .blur-reveal.is-revealed {
+    filter: blur(0);
+    background: rgba(37, 111, 85, 0.18);
+    outline: none;
+  }
+
+  .article-content .content-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin: 1.6em 0;
+  }
+
+  .article-content .content-columns > div {
+    padding: 16px;
+  }
+
+  .article-content .content-gallery {
+    margin: 1.8em 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .article-content .content-gallery img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+
+  .article-content .content-gallery figcaption {
+    grid-column: 1 / -1;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .search-shell {
+    max-width: 860px;
+  }
+
+  .search-box {
+    margin-top: 30px;
+    padding: 18px;
+  }
+
+  .search-box .pagefind-ui {
+    --pagefind-ui-scale: 0.92;
+    --pagefind-ui-primary: var(--accent);
+    --pagefind-ui-text: var(--text);
+    --pagefind-ui-background: transparent;
+    --pagefind-ui-border: var(--line);
+    --pagefind-ui-border-radius: 8px;
+    --pagefind-ui-font: inherit;
+  }
+
+  .search-box .pagefind-ui__search-input {
+    background: var(--surface);
+  }
+
+  .search-box .pagefind-ui__result {
+    animation: page-enter 220ms ease both;
+  }
+
   .empty-state {
     margin-top: 44px;
     border: 1px dashed var(--line);
@@ -656,10 +774,24 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     font-size: 0.9rem;
   }
 
+  @keyframes page-enter {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   @media (max-width: 860px) {
     .home-hero,
     .post-feature-inner,
-    .article-shell {
+    .article-shell,
+    .article-content .content-columns,
+    .article-content .content-gallery {
       grid-template-columns: 1fr;
     }
 
@@ -696,6 +828,10 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
       gap: 4px;
     }
 
+    .nav-links a {
+      padding-inline: 7px;
+    }
+
     main {
       padding-top: 38px;
     }
@@ -713,6 +849,16 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
     .site-footer {
       align-items: flex-start;
       flex-direction: column;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      scroll-behavior: auto !important;
+      transition-duration: 1ms !important;
     }
   }
 </style>

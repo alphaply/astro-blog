@@ -60,5 +60,5 @@ collections:
       - label: Body
         name: body
         widget: markdown
-        editor_components: [image, callout]
+        editor_components: [image, callout, math, code-template, details, blur-reveal, columns, gallery]
         required: false
