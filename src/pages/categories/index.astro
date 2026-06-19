@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+const categoryCounts = new Map<string, number>();
+
+for (const post of posts) {
+  categoryCounts.set(post.data.category, (categoryCounts.get(post.data.category) ?? 0) + 1);
+}
+
+const categories = [...categoryCounts.entries()].sort((a, b) =>
+  a[0].localeCompare(b[0], 'zh-CN', { sensitivity: 'base' }),
+);
+---
+
+<BaseLayout title="分类" description="按分类浏览 Alpha blog 的文章。">
+  <section class="section-heading">
+    <div>
+      <p class="page-kicker">Categories</p>
+      <h1>分类</h1>
+    </div>
+    <p>分类用于组织大的内容方向，比如生活、知识、技术、作品和随笔。</p>
+  </section>
+
+  {
+    categories.length > 0 ? (
+      <div class="category-grid">
+        {categories.map(([category, count]) => (
+          <a class="category-card" href={`/categories/${encodeURIComponent(category)}/`}>
+            <h2>{category}</h2>
+            <p>{count} 篇文章</p>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <p class="empty-state">还没有分类。</p>
+    )
+  }
+</BaseLayout>

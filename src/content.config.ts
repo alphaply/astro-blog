@@ -18,6 +18,11 @@ const blog = defineCollection({
       .nullable()
       .optional()
       .transform((cover) => cover ?? ''),
+    category: z
+      .string()
+      .nullable()
+      .optional()
+      .transform((category) => category || '随笔'),
     tags: z
       .array(z.string())
       .nullable()

@@ -49,6 +49,11 @@ collections:
         name: cover
         widget: image
         required: false
+      - label: Category
+        name: category
+        widget: string
+        default: 随笔
+        hint: 比如：生活、知识、技术、作品、随笔。后续会自动进入分类页。
       - label: Tags
         name: tags
         widget: list

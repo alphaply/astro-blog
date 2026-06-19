@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const works = [
+  {
+    title: '静态博客系统',
+    status: 'Building',
+    description: '基于 Astro、GitHub、Sveltia CMS 和 Vercel 的个人静态博客，重点优化写作体验和长期内容组织。',
+  },
+  {
+    title: '知识库迁移',
+    status: 'Planning',
+    description: '把原博客内容逐步迁移为分类、标签和专题可检索的静态内容。',
+  },
+  {
+    title: 'CMS 写作组件',
+    status: 'Active',
+    description: '为公式、Mermaid、代码、时间线、计划块、图库等内容块提供更顺手的编辑入口。',
+  },
+];
+---
+
+<BaseLayout title="作品集" description="Alpha blog 的作品、项目和实验记录。">
+  <section class="section-heading">
+    <div>
+      <p class="page-kicker">Portfolio</p>
+      <h1>作品集</h1>
+    </div>
+    <p>这里先放项目和实验入口。后续可以继续扩展成独立作品详情页，或者接入新的内容集合让 CMS 管理作品。</p>
+  </section>
+
+  <section class="portfolio-grid" aria-label="作品列表">
+    {works.map((work) => (
+      <article class="portfolio-card">
+        <p class="page-kicker">{work.status}</p>
+        <h2>{work.title}</h2>
+        <p>{work.description}</p>
+      </article>
+    ))}
+  </section>
+</BaseLayout>
