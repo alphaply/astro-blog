@@ -1,5 +1,6 @@
 ---
 import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 
 interface Props {
   title?: string;
@@ -43,6 +44,7 @@ const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
       <span>Alpha's Blog is built with Astro, GitHub, and Sveltia CMS.</span>
     </footer>
     <Analytics />
+    <SpeedInsights />
   </body>
 </html>
 
