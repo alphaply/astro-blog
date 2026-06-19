@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date);
+---
+
+<BaseLayout>
+  <section>
+    <p class="page-kicker">Static publishing</p>
+    <h1 class="page-title">GitHub 内容驱动的 Astro 博客</h1>
+    <p class="page-intro">
+      使用 Sveltia CMS 编辑 MDX 文章，内容和图片直接进入 GitHub 仓库，Vercel 自动部署。
+    </p>
+  </section>
+
+  {
+    posts.length > 0 ? (
+      <section class="post-grid" aria-label="文章列表">
+        {posts.map((post) => (
+          <article class="post-card">
+            {post.data.cover ? (
+              <img class="post-card-cover" src={post.data.cover} alt="" loading="lazy" />
+            ) : null}
+            <div class="post-card-body">
+              <p class="post-meta">{formatDate(post.data.date)}</p>
+              <h2>
+                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+              </h2>
+              <p>{post.data.description}</p>
+              {post.data.tags.length > 0 ? (
+                <ul class="tag-list" aria-label={`${post.data.title} 的标签`}>
+                  {post.data.tags.map((tag) => (
+                    <li>
+                      <a href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          </article>
+        ))}
+      </section>
+    ) : (
+      <p class="empty-state">还没有已发布文章。可以从 /admin/ 创建第一篇。</p>
+    )
+  }
+</BaseLayout>

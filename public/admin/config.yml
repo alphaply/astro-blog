@@ -1,0 +1,62 @@
+backend:
+  name: github
+  repo: alphaply/astro-blog
+  branch: main
+  # For hosted GitHub auth, deploy Sveltia CMS Authenticator and uncomment:
+  # base_url: https://your-sveltia-cms-auth.your-subdomain.workers.dev
+
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: blog
+    label: Blog
+    label_singular: Post
+    folder: src/content/blog
+    create: true
+    extension: mdx
+    format: frontmatter
+    slug: "{{slug}}"
+    identifier_field: title
+    summary: "{{title}}"
+    fields:
+      - label: Title
+        name: title
+        widget: string
+      - label: Description
+        name: description
+        widget: text
+      - label: Publish Date
+        name: date
+        widget: datetime
+        date_format: YYYY-MM-DD
+        time_format: false
+        format: YYYY-MM-DD
+      - label: Updated Date
+        name: updatedDate
+        widget: datetime
+        date_format: YYYY-MM-DD
+        time_format: false
+        format: YYYY-MM-DD
+        required: false
+      - label: Draft
+        name: draft
+        widget: boolean
+        default: false
+        required: false
+      - label: Cover Image
+        name: cover
+        widget: image
+        required: false
+      - label: Tags
+        name: tags
+        widget: list
+        required: false
+        field:
+          label: Tag
+          name: tag
+          widget: string
+      - label: Body
+        name: body
+        widget: markdown
+        required: false

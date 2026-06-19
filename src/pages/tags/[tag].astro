@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+  const allTags = [...new Set(allPosts.flatMap((post) => post.data.tags))];
+
+  return allTags.map((tag) => ({
+    params: { tag },
+    props: { tag },
+  }));
+}
+
+const { tag } = Astro.props;
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const posts = allPosts
+  .filter((post) => post.data.tags.includes(tag))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date);
+---
+
+<BaseLayout title={`标签：${tag}`} description={`浏览 ${tag} 标签下的文章。`}>
+  <section>
+    <p class="page-kicker">Tag</p>
+    <h1 class="page-title">{tag}</h1>
+    <p class="page-intro">{posts.length} 篇文章</p>
+  </section>
+
+  <section class="post-grid" aria-label={`${tag} 标签下的文章`}>
+    {
+      posts.map((post) => (
+        <article class="post-card">
+          {post.data.cover ? (
+            <img class="post-card-cover" src={post.data.cover} alt="" loading="lazy" />
+          ) : null}
+          <div class="post-card-body">
+            <p class="post-meta">{formatDate(post.data.date)}</p>
+            <h2>
+              <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+            </h2>
+            <p>{post.data.description}</p>
+          </div>
+        </article>
+      ))
+    }
+  </section>
+</BaseLayout>
