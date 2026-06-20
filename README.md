@@ -1,6 +1,6 @@
-# Alpha's Blog
+# Alpha Blog
 
-Static blog powered by Astro, MDX content collections, and Sveltia CMS.
+Static blog powered by Astro, MDX content collections, Expressive Code, KaTeX, Pagefind, and Giscus.
 
 ## Local Development
 
@@ -9,40 +9,35 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:4321` for the site and `http://localhost:4321/admin/` for Sveltia CMS.
+Open `http://localhost:4321` for the site.
 
-Production site: `https://elpha.vercel.app/`
+## Content Workflow
 
-Production CMS: `https://elpha.vercel.app/admin/`
+Content is managed directly in the repository:
 
-## Theme and CMS Workflow
+- Blog posts: `src/content/blog/*.mdx`
+- Notes: `src/content/notes/*.mdx`
+- Reusable MDX components: `src/components/mdx`
+- Local assets: `src/assets`
 
-When adding a reusable writing component, update both sides together:
+There is no online CMS or editor. Edit MDX files, commit, push, and let Vercel deploy.
 
-- Add the front-end rendering or CSS for the component.
-- Register a matching Sveltia editor component in `public/admin/cms.js`.
-- Add the component ID to the `editor_components` list for the body field in `public/admin/config.yml`.
-- Add a short example in an MDX draft before publishing.
+## Comments
 
-## CMS Setup
+Comments use Giscus and GitHub Discussions. Configure these environment variables in Vercel:
 
-Content lives in `src/content/blog/*.mdx`. Uploaded media lives in `public/uploads` and is referenced as `/uploads/...`.
-
-The CMS backend is configured in `public/admin/config.yml`:
-
-```yaml
-backend:
-  name: github
-  repo: alphaply/astro-blog
-  branch: main
-  base_url: https://sveltia-cms-auth.1526147838.workers.dev
+```bash
+PUBLIC_GISCUS_REPO=alphaply/astro-blog
+PUBLIC_GISCUS_REPO_ID=...
+PUBLIC_GISCUS_CATEGORY=...
+PUBLIC_GISCUS_CATEGORY_ID=...
 ```
 
-For GitHub login on the Vercel-hosted site, Sveltia CMS uses the Sveltia CMS Authenticator Cloudflare Worker above.
+If the variables are missing, the site shows a static configuration notice instead of failing the build.
 
 ## Deploy
 
-Connect the repository to Vercel. Vercel can use:
+Connect the repository to Vercel:
 
 - Build command: `npm run build`
 - Output directory: `dist`

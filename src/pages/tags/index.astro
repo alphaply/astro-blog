@@ -6,37 +6,30 @@ const posts = await getCollection('blog', ({ data }) => !data.draft);
 const tagCounts = new Map<string, number>();
 
 for (const post of posts) {
-  for (const tag of post.data.tags) {
-    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
-  }
+  for (const tag of post.data.tags) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
 }
 
-const tags = [...tagCounts.entries()].sort((a, b) =>
-  a[0].localeCompare(b[0], 'zh-CN', { sensitivity: 'base' }),
-);
+const tags = [...tagCounts.entries()].sort((a, b) => a[0].localeCompare(b[0], 'zh-CN'));
 ---
 
 <BaseLayout title="标签" description="按标签浏览文章。">
   <section class="section-heading">
     <div>
       <p class="page-kicker">Tags</p>
-      <h1>标签索引</h1>
+      <h1 class="page-title">标签</h1>
     </div>
-    <p>标签更细，适合把不同分类里的笔记串起来。</p>
   </section>
 
-  {
-    tags.length > 0 ? (
-      <div class="tag-index" aria-label="标签列表">
-        {tags.map(([tag, count]) => (
-          <a href={`/tags/${encodeURIComponent(tag)}/`}>
-            {tag}
-            <span>{count}</span>
-          </a>
-        ))}
-      </div>
-    ) : (
-      <p class="empty-state">还没有标签。</p>
-    )
-  }
+  {tags.length > 0 ? (
+    <div class="category-grid" aria-label="标签列表">
+      {tags.map(([tag, count]) => (
+        <a class="category-card" href={`/tags/${encodeURIComponent(tag)}/`}>
+          <h2>{tag}</h2>
+          <p>{count} 篇文章</p>
+        </a>
+      ))}
+    </div>
+  ) : (
+    <p class="empty-state">还没有标签。</p>
+  )}
 </BaseLayout>

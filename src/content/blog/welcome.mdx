@@ -1,28 +1,128 @@
 ---
-title: 第一篇文章
-description: 这是一篇示例 MDX 文章，用来验证 Astro 内容集合和编辑器配置。
+title: Alpha Blog 内容能力展示
+description: 用一篇文章展示 MDX 组件、KaTeX、代码高亮、Mermaid、图片和目录能力。
 date: 2026-06-19
-updatedDate: 2026-06-19
+updatedDate: 2026-06-20
 draft: false
 cover: ''
 category: 知识
 tags:
   - Astro
-  - CMS
+  - MDX
+  - KaTeX
+  - Shiki
 ---
 
-欢迎使用这个静态博客。
+import demoImage from '../../assets/alpha-demo.svg';
+import {
+  Callout,
+  CardGrid,
+  Details,
+  Figure,
+  Gallery,
+  ImageCompare,
+  LinkCard,
+  MermaidBlock,
+  Spoiler,
+  Timeline,
+} from '../../components/mdx';
 
-内容文件存放在 `src/content/blog`，新版后台入口是 `/admin/editor/`。文章会保存为 MDX 文件，并由 Vercel 自动部署。
+这篇文章是站点的内容能力样板。后续写作直接修改仓库里的 `.mdx` 文件，不再依赖 CMS 或在线编辑器。
 
-## 下一步
+## MDX 组件
 
-1. 在新版后台创建真实文章。
-2. 给文章设置分类和标签。
-3. 保存后等待 Vercel 自动部署。
+<Callout type="tip" title="写作方式">
+  MDX 允许在 Markdown 里直接使用组件。适合把常用内容块封装成稳定、好看的表达方式。
+</Callout>
 
-:::callout{type="tip" title="写作方式"}
-新版后台使用块编辑器编辑正文，并在保存时导出为 MDX 短代码。
-:::
+<CardGrid>
+  <LinkCard href="/archives/" label="Archive" title="归档" description="按时间回看所有文章。" />
+  <LinkCard href="/notes/" label="Notes" title="说说" description="短记录和临时想法。" />
+  <LinkCard href="/guestbook/" label="Comments" title="留言" description="基于 GitHub Discussions 的评论入口。" />
+</CardGrid>
 
-这个站点会继续扩展成生活、知识和作品记录的长期版本。
+<Details title="折叠内容示例">
+  这里可以放补充说明、长代码解释、推导步骤，默认不打断正文阅读。
+</Details>
+
+可以用 <Spoiler>点击揭示的毛玻璃隐藏文字</Spoiler> 做轻量剧透或答案隐藏。
+
+## KaTeX 数学公式
+
+行内公式：$E = mc^2$。
+
+块级公式：
+
+$$
+\int_0^1 x^2 dx = \frac{1}{3}
+$$
+
+## 代码高亮
+
+Expressive Code 负责代码块，支持 Shiki 主题、标题、复制按钮、diff 和行高亮。
+
+```ts title="src/lib/greeting.ts" {2}
+export function greet(name: string) {
+  return `Hello, ${name}`;
+}
+
+console.log(greet('Alpha'));
+```
+
+```diff title="theme.diff"
+- themes: ['github-dark', 'github-light']
++ themes: ['catppuccin-mocha', 'github-light']
+```
+
+## 图片与图库
+
+<Figure src={demoImage} alt="Alpha Blog 抽象封面" caption="本地图片通过 Astro Image 组件渲染。" />
+
+<Gallery
+  caption="图库可以用于记录界面、作品或旅行照片。"
+  items={[
+    { src: 'https://api.yppp.net/pc.php', alt: '横向氛围图', caption: '横图' },
+    { src: 'https://api.yppp.net/pe.php', alt: '竖向氛围图', caption: '竖图' },
+  ]}
+/>
+
+<ImageCompare
+  before="https://api.yppp.net/pc.php"
+  after="https://api.yppp.net/pe.php"
+  beforeAlt="横向背景"
+  afterAlt="竖向背景"
+  caption="双图对比组件适合展示前后差异。"
+/>
+
+## 时间线
+
+<Timeline
+  items={[
+    { time: '2026-06', title: '切换到代码写作流', text: '删除后台和在线提交链路，回归 MDX 文件管理。' },
+    { time: '2026-07', title: '迁移旧文章', text: '整理分类、标签和封面。' },
+    { time: '长期', title: '沉淀内容系统', text: '把常用表达继续组件化。' },
+  ]}
+/>
+
+## Mermaid 图表
+
+<MermaidBlock
+  code={`graph TD
+  A[写作 MDX] --> B[Astro 构建]
+  B --> C[Pagefind 索引]
+  C --> D[Vercel 部署]
+  D --> E[读者访问]`}
+/>
+
+## 表格
+
+| 能力 | 工具 | 状态 |
+| --- | --- | --- |
+| 数学公式 | KaTeX | done |
+| 代码高亮 | Expressive Code / Shiki | done |
+| 搜索 | Pagefind | done |
+| 留言 | Giscus | config |
+
+## 后续
+
+这套写作流的核心是：内容保持在 Git 仓库里，展示能力交给 MDX 组件，部署交给 Vercel。

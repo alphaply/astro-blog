@@ -1,0 +1,19 @@
+---
+interface Props {
+  before: string;
+  after: string;
+  beforeAlt: string;
+  afterAlt: string;
+  caption?: string;
+}
+
+const { before, after, beforeAlt, afterAlt, caption } = Astro.props;
+---
+
+<figure class="image-compare">
+  <div>
+    <img src={before} alt={beforeAlt} loading="lazy" />
+    <img src={after} alt={afterAlt} loading="lazy" />
+  </div>
+  {caption ? <figcaption>{caption}</figcaption> : null}
+</figure>

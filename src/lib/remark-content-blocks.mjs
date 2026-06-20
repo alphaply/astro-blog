@@ -22,7 +22,7 @@ export default function remarkContentBlocks() {
         node.data = {
           hName: 'span',
           hProperties: {
-            className: 'blur-reveal',
+            className: 'spoiler-text',
             tabIndex: 0,
           },
         };

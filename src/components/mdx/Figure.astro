@@ -1,0 +1,22 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  src: ImageMetadata | string;
+  alt: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+}
+
+const { src, alt, caption, width, height } = Astro.props;
+---
+
+<figure class="mdx-figure">
+  {typeof src === 'string' ? (
+    <Image src={src} alt={alt} width={width ?? 1200} height={height ?? 720} inferSize={Boolean(!width || !height)} />
+  ) : (
+    <Image src={src} alt={alt} />
+  )}
+  {caption ? <figcaption>{caption}</figcaption> : null}
+</figure>

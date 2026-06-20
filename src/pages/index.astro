@@ -1,174 +1,98 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
+const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
 
-const pageSize = 8;
-const pageCount = Math.max(1, Math.ceil(posts.length / pageSize));
-const tagCounts = new Map<string, number>();
 const categoryCounts = new Map<string, number>();
+const tagCounts = new Map<string, number>();
 
 for (const post of posts) {
   categoryCounts.set(post.data.category, (categoryCounts.get(post.data.category) ?? 0) + 1);
-  for (const tag of post.data.tags) {
-    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
-  }
+  for (const tag of post.data.tags) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
 }
 
 const topTags = [...tagCounts.entries()]
-  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-CN', { sensitivity: 'base' }))
-  .slice(0, 8);
-
-const categories = [...categoryCounts.entries()].sort((a, b) =>
-  a[0].localeCompare(b[0], 'zh-CN', { sensitivity: 'base' }),
-);
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-CN'))
+  .slice(0, 12);
+const categories = [...categoryCounts.entries()].sort((a, b) => a[0].localeCompare(b[0], 'zh-CN'));
 
 const formatDate = (date: Date) =>
   new Intl.DateTimeFormat('zh-CN', {
-    year: 'numeric',
     month: '2-digit',
     day: '2-digit',
   }).format(date);
 ---
 
-<BaseLayout title="Alpha blog" description="Alpha blog 记录生活、知识、作品和长期学习过程。">
+<BaseLayout title="Alpha Blog" description="Alpha Blog：生活、知识与作品记录。">
   <div class="home-shell">
-    <aside class="home-sidebar left" aria-label="个人介绍">
-      <section class="profile-card">
-        <div class="profile-avatar">A</div>
-        <h1>Alpha blog</h1>
-        <p>记录生活、知识、作品和长期学习过程。这里会慢慢沉淀成一个个人知识库，也放一些正在做或已经完成的作品。</p>
-        <ul class="profile-links">
-          <li><a href="/portfolio/">作品集 <span>Works</span></a></li>
-          <li><a href="/categories/">分类 <span>{categories.length}</span></a></li>
-          <li><a href="/tags/">标签 <span>{topTags.length}</span></a></li>
-          <li><a href="/search/">站内搜索 <span>Search</span></a></li>
-        </ul>
-      </section>
-
-      <section class="profile-card">
-        <p class="page-kicker">Categories</p>
-        <ul class="quick-list">
-          {categories.length > 0 ? (
-            categories.map(([category, count]) => (
-              <li>
-                <a href={`/categories/${encodeURIComponent(category)}/`}>
-                  {category}
-                  <span>{count}</span>
-                </a>
-              </li>
-            ))
-          ) : (
-            <li><a href="/admin/">创建第一篇文章 <span>CMS</span></a></li>
-          )}
-        </ul>
-      </section>
-    </aside>
-
-    <section class="home-main" aria-label="文章列表">
+    <section class="home-main" aria-label="最新文章">
       <div class="home-hero">
-        <p class="page-kicker">Life · Knowledge · Works</p>
-        <h2 class="page-title">生活与知识的记录分享</h2>
-        <p class="page-intro">
-          这里不是一次性写完的展示页，而是持续更新的静态博客：文章按分类和标签组织，首页用瀑布流展示最新内容，后续可以继续扩展作品、页面和专题。
-        </p>
+        <p class="page-kicker">Alpha Blog</p>
+        <h1 class="page-title">记录，归档，然后继续向前。</h1>
         <div class="hero-actions">
-          <a class="button-link" href="#feed">浏览文章</a>
-          <a class="button-link secondary" href="/portfolio/">查看作品集</a>
+          <a class="button-link" href="/archives/">归档</a>
+          <a class="button-link secondary" href="/notes/">说说</a>
+          <a class="button-link secondary" href="/guestbook/">留言</a>
         </div>
       </div>
 
-      <div class="feed-toolbar" id="feed">
+      <div class="feed-toolbar">
         <div>
-          <p class="page-kicker">Posts</p>
+          <p class="page-kicker">Latest</p>
           <h2>最新文章</h2>
-          <p>{posts.length} 篇已发布内容，按时间倒序排列。</p>
         </div>
-        <a class="button-link secondary" href="/admin/">写新文章</a>
+        <a class="button-link secondary" href="/search/">搜索内容</a>
       </div>
 
-      {
-        posts.length > 0 ? (
-          <>
-            <div class="masonry-feed" data-paged-feed>
-              {posts.map((post, index) => (
-                <article class="post-card" data-page={Math.floor(index / pageSize) + 1}>
-                  {post.data.cover ? (
-                    <img class="post-card-cover" src={post.data.cover} alt="" loading="lazy" />
-                  ) : null}
-                  <div class="post-card-body">
-                    <p class="post-meta">{formatDate(post.data.date)}</p>
-                    <h2>
-                      <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-                    </h2>
-                    <p>{post.data.description}</p>
-                    <div class="post-taxonomy">
-                      <a class="category-pill" href={`/categories/${encodeURIComponent(post.data.category)}/`}>
-                        {post.data.category}
-                      </a>
-                      {post.data.tags.slice(0, 3).map((tag) => (
-                        <a class="tag-pill" href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
-                      ))}
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-            {pageCount > 1 ? (
-              <div class="pagination" data-feed-pagination aria-label="文章分页">
-                {Array.from({ length: pageCount }, (_, index) => (
-                  <button type="button" data-page={index + 1} aria-current={index === 0 ? 'page' : undefined}>
-                    {index + 1}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </>
-        ) : (
-          <p class="empty-state">还没有已发布文章。可以从 /admin/ 创建第一篇。</p>
-        )
-      }
+      {posts.length > 0 ? (
+        <div class="masonry-feed">
+          {posts.map((post) => <PostCard post={post} />)}
+        </div>
+      ) : (
+        <p class="empty-state">还没有发布文章。</p>
+      )}
     </section>
 
-    <aside class="home-sidebar right" aria-label="活动记录">
+    <aside class="home-sidebar" aria-label="站点概览">
+      <section class="stat-card">
+        <p class="page-kicker">Status</p>
+        <div class="stat-grid">
+          <div><strong>{posts.length}</strong><span>文章</span></div>
+          <div><strong>{notes.length}</strong><span>说说</span></div>
+          <div><strong>{categories.length}</strong><span>分类</span></div>
+          <div><strong>{tagCounts.size}</strong><span>标签</span></div>
+        </div>
+      </section>
+
       <section class="activity-card">
-        <p class="page-kicker">Activity</p>
-        <h2>活动记录</h2>
-        <p>最近更新会自动跟随文章发布变化，适合当作轻量时间线。</p>
+        <p class="page-kicker">Notes</p>
         <ul class="activity-list">
-          {posts.slice(0, 5).map((post) => (
+          {notes.slice(0, 5).map((note) => (
             <li>
-              <time>{formatDate(post.data.updatedDate ?? post.data.date)}</time>
-              <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+              <time>{formatDate(note.data.date)}</time>
+              <a href="/notes/">{note.data.title}</a>
             </li>
           ))}
         </ul>
       </section>
 
       <section class="activity-card">
-        <p class="page-kicker">Site</p>
-        <h2>站点状态</h2>
-        <div class="stat-grid">
-          <div>
-            <strong>{posts.length}</strong>
-            <span>文章</span>
-          </div>
-          <div>
-            <strong>{categories.length}</strong>
-            <span>分类</span>
-          </div>
-          <div>
-            <strong>{tagCounts.size}</strong>
-            <span>标签</span>
-          </div>
-          <div>
-            <strong>MDX</strong>
-            <span>内容格式</span>
-          </div>
-        </div>
+        <p class="page-kicker">Categories</p>
+        <ul class="activity-list">
+          {categories.map(([category, count]) => (
+            <li>
+              <a href={`/categories/${encodeURIComponent(category)}/`}>{category}</a>
+              <span>{count}</span>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section class="activity-card">
@@ -181,29 +105,4 @@ const formatDate = (date: Date) =>
       </section>
     </aside>
   </div>
-
-  <script is:inline>
-    window.addEventListener('DOMContentLoaded', () => {
-      const cards = [...document.querySelectorAll('[data-paged-feed] [data-page]')];
-      const buttons = [...document.querySelectorAll('[data-feed-pagination] button')];
-      if (!cards.length || !buttons.length) return;
-
-      const showPage = (page) => {
-        cards.forEach((card) => {
-          card.hidden = card.getAttribute('data-page') !== page;
-        });
-        buttons.forEach((button) => {
-          const active = button.getAttribute('data-page') === page;
-          if (active) button.setAttribute('aria-current', 'page');
-          else button.removeAttribute('aria-current');
-        });
-      };
-
-      buttons.forEach((button) => {
-        button.addEventListener('click', () => showPage(button.getAttribute('data-page')));
-      });
-
-      showPage('1');
-    });
-  </script>
 </BaseLayout>

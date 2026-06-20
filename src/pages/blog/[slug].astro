@@ -1,6 +1,8 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Giscus from '../../components/Giscus.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
@@ -12,7 +14,19 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.date.valueOf() - b.data.date.valueOf(),
+);
+const currentIndex = posts.findIndex((item) => item.id === post.id);
+const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : undefined;
+const nextPost = currentIndex >= 0 && currentIndex < posts.length - 1 ? posts[currentIndex + 1] : undefined;
+const relatedPosts = posts
+  .filter((item) => item.id !== post.id && item.data.category === post.data.category)
+  .slice(0, 3);
+
+const { Content, headings } = await render(post);
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const cover = post.data.cover;
 
 const formatDate = (date: Date) =>
   new Intl.DateTimeFormat('zh-CN', {
@@ -29,12 +43,53 @@ const formatDate = (date: Date) =>
         <p class="page-kicker">{post.data.category}</p>
         <h1 class="page-title">{post.data.title}</h1>
         <p class="page-intro">{post.data.description}</p>
-        {post.data.cover ? <img class="article-cover" src={post.data.cover} alt="" /> : null}
+        {cover ? (
+          typeof cover === 'string' ? (
+            <img class="article-cover" src={cover} alt="" />
+          ) : (
+            <Image class="article-cover" src={cover} alt="" />
+          )
+        ) : null}
       </header>
 
       <div class="article-content">
         <Content />
       </div>
+
+      {(prevPost || nextPost) ? (
+        <nav class="article-pager" aria-label="上一篇和下一篇">
+          {prevPost ? (
+            <a class="pager-card" href={`/blog/${prevPost.id}/`}>
+              <span>上一篇</span>
+              <strong>{prevPost.data.title}</strong>
+            </a>
+          ) : <span></span>}
+          {nextPost ? (
+            <a class="pager-card" href={`/blog/${nextPost.id}/`}>
+              <span>下一篇</span>
+              <strong>{nextPost.data.title}</strong>
+            </a>
+          ) : <span></span>}
+        </nav>
+      ) : null}
+
+      {relatedPosts.length > 0 ? (
+        <section class="comments-panel">
+          <div class="section-heading compact">
+            <div>
+              <p class="page-kicker">Related</p>
+              <h2>同分类文章</h2>
+            </div>
+          </div>
+          <ul class="activity-list">
+            {relatedPosts.map((item) => (
+              <li><a href={`/blog/${item.id}/`}>{item.data.title}</a></li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      <Giscus />
     </div>
 
     <aside class="article-sidebar" aria-label="文章信息">
@@ -44,20 +99,29 @@ const formatDate = (date: Date) =>
         <strong>分类</strong><br />
         <a class="category-pill" href={`/categories/${encodeURIComponent(post.data.category)}/`}>{post.data.category}</a>
       </p>
-      {
-        post.data.tags.length > 0 ? (
-          <>
-            <p><strong>标签</strong></p>
-            <ul class="tag-list" aria-label={`${post.data.title} 的标签`}>
-              {post.data.tags.map((tag) => (
-                <li>
-                  <a href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : null
-      }
+      {post.data.tags.length > 0 ? (
+        <>
+          <p><strong>标签</strong></p>
+          <ul class="tag-list" aria-label={`${post.data.title} 的标签`}>
+            {post.data.tags.map((tag) => (
+              <li><a href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a></li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+
+      {toc.length > 0 ? (
+        <div class="toc-panel">
+          <p><strong>目录</strong></p>
+          <ol class="toc-list">
+            {toc.map((heading) => (
+              <li class={`depth-${heading.depth}`}>
+                <a href={`#${heading.slug}`}>{heading.text}</a>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ) : null}
     </aside>
   </article>
 </BaseLayout>

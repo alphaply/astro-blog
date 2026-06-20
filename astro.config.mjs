@@ -1,6 +1,5 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
-import react from '@astrojs/react';
 import expressiveCode from 'astro-expressive-code';
 import { unified } from '@astrojs/markdown-remark';
 import rehypeKatex from 'rehype-katex';
@@ -16,14 +15,13 @@ export default defineConfig({
     }),
   },
   integrations: [
-    react(),
     expressiveCode({
-      themes: ['github-dark', 'github-light'],
+      themes: ['catppuccin-mocha', 'github-light'],
       styleOverrides: {
-        borderRadius: '8px',
+        borderRadius: '14px',
         codeFontSize: '0.92rem',
         frames: {
-          frameBoxShadowCssValue: 'none',
+          frameBoxShadowCssValue: '0 22px 54px rgba(3, 7, 18, 0.28)',
         },
       },
     }),

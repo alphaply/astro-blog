@@ -1,0 +1,25 @@
+---
+interface Item {
+  time: string;
+  title: string;
+  text?: string;
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="content-timeline">
+  {items.map((item) => (
+    <div class="timeline-item">
+      <time>{item.time}</time>
+      <div>
+        <strong>{item.title}</strong>
+        {item.text ? <p>{item.text}</p> : null}
+      </div>
+    </div>
+  ))}
+</div>
