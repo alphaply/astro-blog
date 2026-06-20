@@ -20,7 +20,7 @@ Content is managed directly in the repository:
 - Reusable MDX components: `src/components/mdx`
 - Local assets: `src/assets`
 
-There is no online CMS or editor. Edit MDX files, commit, push, and let Vercel deploy.
+There is no online writing backend. Edit MDX files, commit, push, and let Vercel deploy.
 
 ## Comments
 

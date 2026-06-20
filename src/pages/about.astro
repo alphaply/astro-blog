@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Timeline } from '../components/mdx';
+
+const timeline = [
+  {
+    time: '现在',
+    title: '代码写作流',
+    text: '内容回到 MDX 文件，使用 Git 记录变化，用 Astro 生成静态站点。',
+  },
+  {
+    time: '近期',
+    title: '迁移旧博客',
+    text: '整理旧文章、分类、标签和作品记录，逐步补齐长期内容库。',
+  },
+  {
+    time: '长期',
+    title: '沉淀知识与生活',
+    text: '把技术笔记、生活记录、作品复盘和灵感碎片都放在同一个安静的地方。',
+  },
+];
+---
+
+<BaseLayout title="关于" description="关于 Alpha Blog。">
+  <section class="about-hero">
+    <div class="about-avatar" aria-hidden="true">A</div>
+    <div>
+      <p class="page-kicker">About</p>
+      <h1 class="page-title">Alpha Blog</h1>
+      <p class="page-intro">一个用来记录生活、知识、作品和长期学习过程的静态博客。</p>
+      <div class="about-links">
+        <a class="button-link" href="/archives/">文章归档</a>
+        <a class="button-link secondary" href="/portfolio/">作品记录</a>
+        <a class="button-link secondary" href="/guestbook/">留言</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-grid" aria-label="关于本站">
+    <article class="about-panel">
+      <p class="page-kicker">Writing</p>
+      <h2>写什么</h2>
+      <p>技术笔记、工具折腾、旧博客迁移、作品复盘，也放一些生活里的短记录。</p>
+    </article>
+    <article class="about-panel">
+      <p class="page-kicker">Stack</p>
+      <h2>怎么构建</h2>
+      <p>Astro、MDX、Pagefind、KaTeX、Expressive Code、Giscus 和 Vercel。</p>
+    </article>
+    <article class="about-panel">
+      <p class="page-kicker">Rule</p>
+      <h2>内容原则</h2>
+      <p>优先把内容写清楚，样式服务阅读；复杂展示沉淀为 MDX 组件。</p>
+    </article>
+  </section>
+
+  <section class="about-panel" style="margin-top: 16px;">
+    <div class="section-heading compact">
+      <div>
+        <p class="page-kicker">Timeline</p>
+        <h2>站点时间线</h2>
+      </div>
+    </div>
+    <Timeline items={timeline} />
+  </section>
+</BaseLayout>
